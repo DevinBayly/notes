@@ -99,8 +99,8 @@ function listFiles() {
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
                 appendPre(file.name + ' (' + file.id + ')');
-                if (file.name == "hand_low_poly.zip") {
-                idFound = file.id
+                if (file.name == "notes.json") {
+                    idFound = file.id
                 }
             }
         } else {
@@ -116,13 +116,13 @@ let brandNew = ()=> {
 Content-Disposition:form-data;name="metadata";filename="first"
 Content-Type: application/json; charset=UTF-8
 
-{"name":"testing","mimeType":"text/plain"}
+{"name":"notes.json","mimeType":"application/json"}
 `
     let second = `--uploadboundary
 Content-Disposition:form-data;name="file";filename="blob"
-Content-Type: text/plain
+Content-Type: application/json
 
-testing with this text
+${JSON.stringify({starting:"text"})}
 --uploadboundary--
     `
     fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&api=${API_KEY}&fields=id`,{
@@ -137,29 +137,26 @@ testing with this text
 }
 
 let performGet =()=> {
-    fetch(`https://www.googleapis.com/drive/v3/files/${idFound}/?key=${API_KEY}&alt=media`,{
-    }).then(res=> res.text()).then(t=> console.log(t))
-    gapi.client.drive.files.get({fileId:idFound,alt:"media"}).then(res=> {
-        console.log(res.result.files)
+    return fetch(`https://www.googleapis.com/drive/v3/files/${idFound}/?key=${API_KEY}&alt=media`,{
     })
 }
-let performUpdate =()=> {
+let performUpdate =(jdata)=> {
 
     let first = `--uploadboundary
 Content-Disposition:form-data;name="metadata";filename="first"
 Content-Type: application/json; charset=UTF-8
 
-{"name":"testing","mimeType":"text/plain"}
+{"name":"notes.json","mimeType":"application/json"}
 `
     let second = `--uploadboundary
 Content-Disposition:form-data;name="file";filename="blob"
-Content-Type: text/plain
+Content-Type: application/json
 
-testing with this text ${Date.now()}
+${JSON.stringify(jdata)}
 --uploadboundary--`
 // make the path include the fileID to update
-    fetch(`https://www.googleapis.com/upload/drive/v3/files/${idFound}?uploadType=multipart&key=${API_KEY}&fields=id`,{
-        method:"POST",
+    fetch(`https://www.googleapis.com/upload/drive/v3/files/${idFound}/?uploadType=multipart&key=${API_KEY}&fields=id`,{
+        method:"PATCH",
         headers:{
             "Content-type":"multipart/related; boundary=uploadboundary",
             "Content-Length":(first+second).length,
@@ -167,15 +164,16 @@ testing with this text ${Date.now()}
         },
         body:first+second
     }).then(res=> res.json()).then(j=> console.log(j))
+    // try the gapi.method
 
 
 }
 // so you create a multtipart upload, with the metadata first, and the body next
-let performUpload = ()=> {
+let performUpload = (jdata)=> {
     if (idFound) {
         // try to update the contents
         console.log("updating")
-        performUpdate()
+        performUpdate(jdata)
     } else {
         console.log("creating anew")
         brandNew()

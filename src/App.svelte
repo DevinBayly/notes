@@ -13,6 +13,7 @@ import {performUpload,performGet,brandNew} from "./drive_code.js"
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
+    <canvas id="canvas"></canvas>
 
 
   </div>
