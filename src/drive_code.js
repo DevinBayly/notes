@@ -91,7 +91,6 @@ let idFound
 function listFiles() {
     gapi.client.drive.files.list({
         'pageSize': 10,
-        'spaces':"appDataFolder",
         'fields': "nextPageToken, files(id, name)"
     }).then(function (response) {
         appendPre('Files:');
@@ -100,7 +99,9 @@ function listFiles() {
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
                 appendPre(file.name + ' (' + file.id + ')');
+                if (file.name == "hand_low_poly.zip") {
                 idFound = file.id
+                }
             }
         } else {
             appendPre('No files found.');
@@ -115,7 +116,7 @@ let brandNew = ()=> {
 Content-Disposition:form-data;name="metadata";filename="first"
 Content-Type: application/json; charset=UTF-8
 
-{"name":"testing","mimeType":"text/plain","parents":["appDataFolder"]}
+{"name":"testing","mimeType":"text/plain"}
 `
     let second = `--uploadboundary
 Content-Disposition:form-data;name="file";filename="blob"
@@ -136,7 +137,11 @@ testing with this text
 }
 
 let performGet =()=> {
-    fetch(`https://www.googleapis.com/drive/v3/files/${idFound}?&key=${API_KEY}`).then(res=> res.text).then(t=> console.log(t))
+    fetch(`https://www.googleapis.com/drive/v3/files/${idFound}/?key=${API_KEY}&alt=media`,{
+    }).then(res=> res.text()).then(t=> console.log(t))
+    gapi.client.drive.files.get({fileId:idFound,alt:"media"}).then(res=> {
+        console.log(res.result.files)
+    })
 }
 let performUpdate =()=> {
 
@@ -144,7 +149,7 @@ let performUpdate =()=> {
 Content-Disposition:form-data;name="metadata";filename="first"
 Content-Type: application/json; charset=UTF-8
 
-{"name":"testing","mimeType":"text/plain","parents":["appDataFolder"]}
+{"name":"testing","mimeType":"text/plain"}
 `
     let second = `--uploadboundary
 Content-Disposition:form-data;name="file";filename="blob"
