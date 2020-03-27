@@ -275,9 +275,9 @@ class NoteElement {
     if (/-stop-/.exec(this.element.value)) {
       this.end = new Date()
       this.element.value = this.element.value.replace(/-stop-/, "")
-      this.element.value = this.element.value.replace(/-running-/, "")
+      let datestring= `${new Date().toUTCString()}: ${((this.end.getTime() - this.begin.getTime()) / (1000 * 60)).toFixed(3)}`
+      this.element.value = this.element.value.replace(/-running-/, datestring)
       let position = this.element.selectionStart
-      this.element.value += `${new Date().toUTCString()}: ${((this.end.getTime() - this.begin.getTime()) / (1000 * 60)).toFixed(3)}`
       clearTimeout(this.timeout)
     }
 
