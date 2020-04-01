@@ -1,5 +1,5 @@
 // import various functions from drive_code
-import {performUpload,performGet} from "./drive_code.js"
+import { performUpload, performGet } from "./drive_code.js"
 
 let output = []
 let run = () => {
@@ -9,8 +9,14 @@ let run = () => {
   can.width = window.innerWidth
   can.height = window.innerHeight
   let ctx = can.getContext("2d")
-  setInterval(()=> {ctx.fillStyle = "#f9d899"
-  ctx.fillRect(0, 0, window.scrollMaxX + window.innerWidth, window.innerHeight+window.scrollMaxY)},3000)
+  setInterval(() => {
+    can = document.querySelector("#canvas")
+    ctx = can.getContext("2d")
+    can.width = window.scrollMaxX + window.innerWidth
+    can.height = window.scrollMaxY + window.innerHeight
+    ctx.fillStyle = "#f9d899"
+    ctx.fillRect(0, 0, window.scrollMaxX + window.innerWidth, window.innerHeight + window.scrollMaxY)
+  }, 3000)
   let expbtn = new ExportBtn()
   let upload = new LoadBtn()
   let spec_load = new loadAllBtn()
@@ -210,7 +216,7 @@ class NoteElement {
 
 
       }
-      
+
       if (e.key == "Control") {
         this.control = true
       }
@@ -221,10 +227,10 @@ class NoteElement {
       if (e.key == "Tab") {
         e.preventDefault()
         let initial = this.element.selectionStart
-        this.element.value = this.element.value.slice(0,initial) + "  " + this.element.value.slice(initial)
-        this.element.selectionStart = initial+2
-        this.element.selectionEnd = initial +2
-        
+        this.element.value = this.element.value.slice(0, initial) + "  " + this.element.value.slice(initial)
+        this.element.selectionStart = initial + 2
+        this.element.selectionEnd = initial + 2
+
       }
       if (e.key == "Delete") {
         // remove this element
@@ -275,7 +281,7 @@ class NoteElement {
     if (/-stop-/.exec(this.element.value)) {
       this.end = new Date()
       this.element.value = this.element.value.replace(/-stop-/, "")
-      let datestring= `${new Date().toUTCString()}: ${((this.end.getTime() - this.begin.getTime()) / (1000 * 60)).toFixed(3)}`
+      let datestring = `${new Date().toUTCString()}: ${((this.end.getTime() - this.begin.getTime()) / (1000 * 60)).toFixed(3)}`
       this.element.value = this.element.value.replace(/-running-/, datestring)
       let position = this.element.selectionStart
       clearTimeout(this.timeout)
@@ -330,8 +336,8 @@ class NoteElement {
 class JSONReader {
   constructor() {
     // look for the active file
-    performGet().then(res=>res.json()).then(rawText => {
-    let jsonArray=JSON.parse(rawText)
+    performGet().then(res => res.json()).then(rawText => {
+      let jsonArray = JSON.parse(rawText)
       jsonArray.map(j => {
         let noteele = new NoteElement([Math.abs(j.x), Math.abs(j.y)], j.value)
         noteele.init()
@@ -379,7 +385,7 @@ class ScrollHelper {
 class loadAllBtn {
   constructor() {
     this.btn = document.createElement("button")
-    this.btn.innerHTML="load all"
+    this.btn.innerHTML = "load all"
     document.body.prepend(this.btn)
     this.btn.addEventListener("click", () => {
       this.load()
@@ -418,8 +424,8 @@ class loadAllBtn {
             noteele.init()
           })
         })
-        
-      
+
+
       }
     })
   }
@@ -432,7 +438,7 @@ class LoadBtn {
     this.btn.addEventListener("click", () => {
       this.load()
     })
-    this.btn.id= "reload"
+    this.btn.id = "reload"
     this.btn.innerHTML = "Load prev data"
   }
   load() {
@@ -475,5 +481,5 @@ class ExportBtn {
   }
 }
 
-export{run}
+export { run }
 //
