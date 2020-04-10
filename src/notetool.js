@@ -12,10 +12,13 @@ let run = () => {
   setInterval(() => {
     can = document.querySelector("#canvas")
     ctx = can.getContext("2d")
+    let existing = ctx.getImageData(0, 0, can.width, can.height)
     can.width = window.scrollMaxX + window.innerWidth
     can.height = window.scrollMaxY + window.innerHeight
     ctx.fillStyle = "#f9d899"
     ctx.fillRect(0, 0, window.scrollMaxX + window.innerWidth, window.innerHeight + window.scrollMaxY)
+    ctx.putImageData(existing,0,0)
+
   }, 3000)
   let expbtn = new ExportBtn()
   let upload = new LoadBtn()
@@ -153,8 +156,8 @@ class NoteElement {
     this.element.style.left = x + "px"
     this.element.style.top = y + "px"
     this.element.value = value
-    this.element.style.width = "200px"
-    this.element.style.height = "200px"
+    this.element.style.width = "20px"
+    this.element.style.height = "20px"
   }
   init() {
     document.body.append(this.element)
@@ -236,12 +239,20 @@ class NoteElement {
         // remove this element
         //this.element.remove()
       }
+      // 
+      this.calcHeight()
     })
     this.element.addEventListener("keyup", (e) => {
       if (e.key == "Control") {
         this.control = false
       }
     })
+  }
+  calcHeight() {
+     // width
+     let largestline = Math.max(... this.element.value.split("\n").map(e=> e.length))
+     this.element.style.width = `${largestline*8 + 30 > 150? 150: largestline*8 + 30 }px`
+     this.element.style.height = `${this.element.scrollHeight}px`
   }
   check() {
     console.log("checking")
