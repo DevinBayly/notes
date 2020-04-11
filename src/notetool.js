@@ -12,12 +12,12 @@ let run = () => {
   setInterval(() => {
     can = document.querySelector("#canvas")
     ctx = can.getContext("2d")
-    let existing = ctx.getImageData(0, 0, can.width, can.height)
+    //let existing = ctx.getImageData(0, 0, can.width, can.height)
     can.width = window.scrollMaxX + window.innerWidth
     can.height = window.scrollMaxY + window.innerHeight
     ctx.fillStyle = "#f9d899"
     ctx.fillRect(0, 0, window.scrollMaxX + window.innerWidth, window.innerHeight + window.scrollMaxY)
-    ctx.putImageData(existing,0,0)
+    //ctx.putImageData(existing,0,0)
 
   }, 3000)
   let expbtn = new ExportBtn()
