@@ -156,8 +156,8 @@ class NoteElement {
     this.element.style.left = x + "px"
     this.element.style.top = y + "px"
     this.element.value = value
-    this.element.style.width = "20px"
-    this.element.style.height = "20px"
+    this.element.style.width = "200px"
+    this.element.style.height = "200px"
   }
   init() {
     document.body.append(this.element)
@@ -240,7 +240,7 @@ class NoteElement {
         //this.element.remove()
       }
       // 
-      this.calcHeight()
+      //this.calcHeight()
     })
     this.element.addEventListener("keyup", (e) => {
       if (e.key == "Control") {
