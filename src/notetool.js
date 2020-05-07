@@ -1,5 +1,6 @@
 // import various functions from drive_code
 import { performUpload, performGet } from "./drive_code.js"
+import { pdfOb } from "./pdf_loader.js"
 
 let output = []
 let run = () => {
@@ -9,17 +10,17 @@ let run = () => {
   can.width = window.innerWidth
   can.height = window.innerHeight
   let ctx = can.getContext("2d")
-  setInterval(() => {
-    can = document.querySelector("#canvas")
-    ctx = can.getContext("2d")
-    //let existing = ctx.getImageData(0, 0, can.width, can.height)
-    can.width = window.scrollMaxX + window.innerWidth
-    can.height = window.scrollMaxY + window.innerHeight
-    ctx.fillStyle = "#f9d899"
-    ctx.fillRect(0, 0, window.scrollMaxX + window.innerWidth, window.innerHeight + window.scrollMaxY)
-    //ctx.putImageData(existing,0,0)
+  //setInterval(() => {
+  //  can = document.querySelector("#canvas")
+  //  ctx = can.getContext("2d")
+  //  //let existing = ctx.getImageData(0, 0, can.width, can.height)
+  //  can.width = window.scrollMaxX + window.innerWidth
+  //  can.height = window.scrollMaxY + window.innerHeight
+  //  ctx.fillStyle = "#f9d899"
+  //  ctx.fillRect(0, 0, window.scrollMaxX + window.innerWidth, window.innerHeight + window.scrollMaxY)
+  //  //ctx.putImageData(existing,0,0)
 
-  }, 3000)
+  //}, 3000)
   let expbtn = new ExportBtn()
   let upload = new LoadBtn()
   let spec_load = new loadAllBtn()
@@ -145,6 +146,7 @@ let run = () => {
   //new ScrollHelper()
   //include the download click
   document.querySelector("#reload").click()
+  // make the iframe
 
 }
 
@@ -249,10 +251,10 @@ class NoteElement {
     })
   }
   calcHeight() {
-     // width
-     let largestline = Math.max(... this.element.value.split("\n").map(e=> e.length))
-     this.element.style.width = `${largestline*8 + 30 > 150? 150: largestline*8 + 30 }px`
-     this.element.style.height = `${this.element.scrollHeight}px`
+    // width
+    let largestline = Math.max(... this.element.value.split("\n").map(e => e.length))
+    this.element.style.width = `${largestline * 8 + 30 > 150 ? 150 : largestline * 8 + 30}px`
+    this.element.style.height = `${this.element.scrollHeight}px`
   }
   check() {
     console.log("checking")
@@ -280,6 +282,34 @@ class NoteElement {
       }).then(res => res.text()).then(t => {
         this.element.value = t
       })
+    }
+    if (/-loadpdf.* -/.exec(this.element.value)) {
+      // create a pdf ob attached to this note
+      let id = this.element.value.match(/-loadpdf(.*?) -/)[1]
+      this.element.value = this.element.value.replace(/-loadpdf.*? -/, id)
+      pdfOb().then(pdfob => {
+        this.pdfob = pdfob
+        this.pdfob.create(id)
+        // funcntion to put page count in the bottom of element 
+        let closure = ()=> {
+          this.element.value+=`\n-page${this.pdfob.page}-`
+        }
+        this.pdfob.ep =closure 
+        // move the canvas to the left of the note element
+        let holder = document.querySelector("#pdfcontainer")
+        document.querySelector("#pdfcontainer").style.position = "absolute"
+        document.querySelector("#pdfcontainer").style.left = `${parseFloat(this.element.style.left) - holder.getBoundingClientRect().width}px`
+        document.querySelector("#pdfcontainer").style.top = `${parseFloat(this.element.style.top) - holder.getBoundingClientRect().height}px`
+      })
+    }
+    if (/-page\d+-/.exec(this.element.value.slice(this.element.startSelection,this.element.endSelection))) {
+      // get the page 
+      let num = this.element.value.match(/-page(\d+)-/)[1]
+      this.pdfob.loadPage(num)
+        let holder = document.querySelector("#pdfcontainer")
+        document.querySelector("#pdfcontainer").style.position = "absolute"
+        document.querySelector("#pdfcontainer").style.left = `${parseFloat(this.element.style.left) - holder.getBoundingClientRect().width}px`
+        document.querySelector("#pdfcontainer").style.top = `${parseFloat(this.element.style.top) - holder.getBoundingClientRect().height}px`
     }
     if (/-start-/.exec(this.element.value)) {
       this.element.value = this.element.value.replace(/-start-/, "-running-")
