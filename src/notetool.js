@@ -1,6 +1,7 @@
 // import various functions from drive_code
 import { performUpload, performGet } from "./drive_code.js"
 import { pdfOb } from "./pdf_loader.js"
+import {imageOb} from "./img_loader.js"
 
 let output = []
 let run = () => {
@@ -207,6 +208,21 @@ class NoteElement {
 
     //
     this.element.addEventListener("keydown", (e) => {
+      if (e.key == "ArrowUp") {
+        this.imageob.shiftup()
+      }
+      if (e.key =="ArrowDown") {
+        this.imageob.shiftdown()
+      } 
+      if (e.key == "ArrowRight") {
+        this.pdfob.page+=1
+        this.pdfob.loadPage(this.pdfob.page)
+      }
+      if (e.key =="ArrowLeft") {
+        this.pdfob.page-=1
+        this.pdfob.loadPage(this.pdfob.page)
+
+      }
       if (e.key == "Enter") {
         let position = this.element.selectionStart
         // get last line
@@ -283,6 +299,26 @@ class NoteElement {
         this.element.value = t
       })
     }
+    if (/-loadimg .* -/.exec(this.element.value)) {
+      let imagename = this.element.value.match(/-loadimg (.*) -/)[1]
+      // perform fetch, create image in the #pdfcontainer
+      // make arrow keys up and down scroll through the document height wise
+      this.imageob = imageOb()
+      this.imageob.create(imagename)
+      let closure = ()=> {
+        let lines = this.element.value.split("\n")
+          if (/-top/.exec(lines.slice(-1)[0])) {
+            lines.pop()
+            this.element.value = lines.join("\n")
+          }
+          // 
+          this.element.value+=`\n-top${this.imageob.topCalc}-`
+          let holder = document.querySelector("#pdfcontainer")
+          document.querySelector("#pdfcontainer").style.position = "absolute"
+          document.querySelector("#pdfcontainer").style.left = `${parseFloat(this.element.style.left) - holder.getBoundingClientRect().width}px`
+      }
+      this.imageob.ep = closure
+    }
     if (/-loadpdf.* -/.exec(this.element.value)) {
       // create a pdf ob attached to this note
       let id = this.element.value.match(/-loadpdf(.*?) -/)[1]
@@ -292,6 +328,13 @@ class NoteElement {
         this.pdfob.create(id)
         // funcntion to put page count in the bottom of element 
         let closure = ()=> {
+          // if the last line was page something then we should replace it
+          let lines = this.element.value.split("\n")
+          if (/-page/.exec(lines.slice(-1)[0])) {
+            lines.pop()
+            this.element.value = lines.join("\n")
+          }
+          // 
           this.element.value+=`\n-page${this.pdfob.page}-`
         }
         this.pdfob.ep =closure 
@@ -304,12 +347,11 @@ class NoteElement {
     }
     if (/-page\d+-/.exec(this.element.value.slice(this.element.startSelection,this.element.endSelection))) {
       // get the page 
-      let num = this.element.value.match(/-page(\d+)-/)[1]
+      let num = this.element.value.slice(this.element.startSelection,this.element.endSelection).match(/-page(\d+)-/)[1]
       this.pdfob.loadPage(num)
         let holder = document.querySelector("#pdfcontainer")
         document.querySelector("#pdfcontainer").style.position = "absolute"
         document.querySelector("#pdfcontainer").style.left = `${parseFloat(this.element.style.left) - holder.getBoundingClientRect().width}px`
-        document.querySelector("#pdfcontainer").style.top = `${parseFloat(this.element.style.top) - holder.getBoundingClientRect().height}px`
     }
     if (/-start-/.exec(this.element.value)) {
       this.element.value = this.element.value.replace(/-start-/, "-running-")

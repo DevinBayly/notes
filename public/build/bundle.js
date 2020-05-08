@@ -661,18 +661,24 @@ ${JSON.stringify(jdata)}
             ob.pdf = ob.pdfjsLib.getDocument({ data: ob.pdfData }).promise;
             ob.holder = document.querySelector("#pdfcontainer");
             let left = document.createElement("button");
+            left.innerHTML="left";
+            left.style.position="relative";
+            left.style.left="0px";
+            left.style.bottom="0px";
             left.addEventListener("click",()=> {
                 // progress the page, call ep
                 ob.page -=1;
                 ob.loadPage(ob.page);
-                ob.ep();
             });
             let right = document.createElement("button");
+            right.style.position="relative";
+            right.style.right="0px";
+            right.style.bottom="0px";
+            right.innerHTML = "right";
             right.addEventListener("click",()=> {
                 // progress the page, call ep
                 ob.page +=1;
                 ob.loadPage(ob.page);
-                ob.ep();
             });
             ob.holder.append(left);
             ob.holder.append(right);
@@ -702,8 +708,41 @@ ${JSON.stringify(jdata)}
                     renderTask.promise.then(function () {
                         console.log('Page rendered');
                     });
+                    ob.ep();
                 });
             });
+        };
+        return ob
+    };
+
+    let imageOb = () => {
+        let ob = {};
+        // 
+        ob.ep = null;
+        ob.create = (src) => {
+            //
+            let i = new Image();
+            i.src = src;
+            i.onload = () => {
+                ob.holder = document.querySelector("#pdfcontainer");
+                ob.holder.style.overflow= "scroll";
+                ob.holder.style.height=`500px`;
+                ob.holder.append(i);
+            };
+        };
+        ob.page = 0;
+        ob.shiftup = ()=> {
+            ob.page -=1;
+            // # of pages
+            ob.topCalc =ob.holder.getBoundingClientRect().height*ob.page;
+            ob.holder.scrollTop = ob.topCalc;
+            ob.ep();
+        };
+        ob.shiftdown =()=> {
+            ob.page+=1;
+            ob.topCalc =ob.holder.getBoundingClientRect().height*ob.page;
+            ob.holder.scrollTop = ob.topCalc;
+            ob.ep();
         };
         return ob
     };
@@ -914,6 +953,21 @@ ${JSON.stringify(jdata)}
 
         //
         this.element.addEventListener("keydown", (e) => {
+          if (e.key == "ArrowUp") {
+            this.imageob.shiftup();
+          }
+          if (e.key =="ArrowDown") {
+            this.imageob.shiftdown();
+          } 
+          if (e.key == "ArrowRight") {
+            this.pdfob.page+=1;
+            this.pdfob.loadPage(this.pdfob.page);
+          }
+          if (e.key =="ArrowLeft") {
+            this.pdfob.page-=1;
+            this.pdfob.loadPage(this.pdfob.page);
+
+          }
           if (e.key == "Enter") {
             let position = this.element.selectionStart;
             // get last line
@@ -987,6 +1041,26 @@ ${JSON.stringify(jdata)}
             this.element.value = t;
           });
         }
+        if (/-loadimg .* -/.exec(this.element.value)) {
+          let imagename = this.element.value.match(/-loadimg (.*) -/)[1];
+          // perform fetch, create image in the #pdfcontainer
+          // make arrow keys up and down scroll through the document height wise
+          this.imageob = imageOb();
+          this.imageob.create(imagename);
+          let closure = ()=> {
+            let lines = this.element.value.split("\n");
+              if (/-top/.exec(lines.slice(-1)[0])) {
+                lines.pop();
+                this.element.value = lines.join("\n");
+              }
+              // 
+              this.element.value+=`\n-top${this.imageob.topCalc}-`;
+              let holder = document.querySelector("#pdfcontainer");
+              document.querySelector("#pdfcontainer").style.position = "absolute";
+              document.querySelector("#pdfcontainer").style.left = `${parseFloat(this.element.style.left) - holder.getBoundingClientRect().width}px`;
+          };
+          this.imageob.ep = closure;
+        }
         if (/-loadpdf.* -/.exec(this.element.value)) {
           // create a pdf ob attached to this note
           let id = this.element.value.match(/-loadpdf(.*?) -/)[1];
@@ -996,6 +1070,13 @@ ${JSON.stringify(jdata)}
             this.pdfob.create(id);
             // funcntion to put page count in the bottom of element 
             let closure = ()=> {
+              // if the last line was page something then we should replace it
+              let lines = this.element.value.split("\n");
+              if (/-page/.exec(lines.slice(-1)[0])) {
+                lines.pop();
+                this.element.value = lines.join("\n");
+              }
+              // 
               this.element.value+=`\n-page${this.pdfob.page}-`;
             };
             this.pdfob.ep =closure; 
@@ -1008,12 +1089,11 @@ ${JSON.stringify(jdata)}
         }
         if (/-page\d+-/.exec(this.element.value.slice(this.element.startSelection,this.element.endSelection))) {
           // get the page 
-          let num = this.element.value.match(/-page(\d+)-/)[1];
+          let num = this.element.value.slice(this.element.startSelection,this.element.endSelection).match(/-page(\d+)-/)[1];
           this.pdfob.loadPage(num);
             let holder = document.querySelector("#pdfcontainer");
             document.querySelector("#pdfcontainer").style.position = "absolute";
             document.querySelector("#pdfcontainer").style.left = `${parseFloat(this.element.style.left) - holder.getBoundingClientRect().width}px`;
-            document.querySelector("#pdfcontainer").style.top = `${parseFloat(this.element.style.top) - holder.getBoundingClientRect().height}px`;
         }
         if (/-start-/.exec(this.element.value)) {
           this.element.value = this.element.value.replace(/-start-/, "-running-");

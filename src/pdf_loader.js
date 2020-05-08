@@ -19,18 +19,24 @@ export let pdfOb = async () => {
         ob.pdf = ob.pdfjsLib.getDocument({ data: ob.pdfData }).promise
         ob.holder = document.querySelector("#pdfcontainer")
         let left = document.createElement("button")
+        left.innerHTML="left"
+        left.style.position="relative"
+        left.style.left="0px"
+        left.style.bottom="0px"
         left.addEventListener("click",()=> {
             // progress the page, call ep
             ob.page -=1
             ob.loadPage(ob.page)
-            ob.ep()
         })
         let right = document.createElement("button")
+        right.style.position="relative"
+        right.style.right="0px"
+        right.style.bottom="0px"
+        right.innerHTML = "right"
         right.addEventListener("click",()=> {
             // progress the page, call ep
             ob.page +=1
             ob.loadPage(ob.page)
-            ob.ep()
         })
         ob.holder.append(left)
         ob.holder.append(right)
@@ -60,6 +66,7 @@ export let pdfOb = async () => {
                 renderTask.promise.then(function () {
                     console.log('Page rendered');
                 });
+                ob.ep()
             });
         })
     }
