@@ -13,5 +13,4 @@ export default app;
 window.onload =()=> {
 	handleClientLoad()
 	run()
-	pdfrun()
 }

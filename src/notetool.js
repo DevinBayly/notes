@@ -8,8 +8,8 @@ let run = () => {
   Notification.requestPermission()
   // background stuff
   let can = document.querySelector("#canvas")
-  can.width = window.innerWidth
-  can.height = window.innerHeight
+  can.width = 8000
+  can.height = 8000
   let ctx = can.getContext("2d")
   //setInterval(() => {
   //  can = document.querySelector("#canvas")
