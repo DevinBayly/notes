@@ -353,6 +353,9 @@ class NoteElement {
         document.querySelector("#pdfcontainer").style.position = "absolute"
         document.querySelector("#pdfcontainer").style.left = `${parseFloat(this.element.style.left) - holder.getBoundingClientRect().width}px`
     }
+    if(/-date-/.exec(this.element.value)) {
+      this.element.value = this.element.value.replace(/-date-/,JSON.stringify(new Date()))
+    }
     if (/-start-/.exec(this.element.value)) {
       this.element.value = this.element.value.replace(/-start-/, "-running-")
       this.begin = new Date()
