@@ -398,21 +398,6 @@ class NoteElement {
 
       })
     }
-    if (/-date-/.exec(this.element.value)) {
-      // remove the command string
-      this.element.value = this.element.value.replace(/-date-/, "")
-      fetch("http://localhost:8040", {
-        method: "POST",
-        body: JSON.stringify(
-          {
-            operation: "-date-",
-            contents: this.element.value
-          }
-        )
-      }).then(res => res.text()).then(t => {
-        this.element.value = t
-      })
-    }
   }
   timer() {
     this.timer = setInterval(() => { this.check() }, 10000)
