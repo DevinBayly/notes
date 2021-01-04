@@ -13,10 +13,20 @@ let run = () => {
 
 }
 
+let TextEle = ()=> ({
+  ele: document.createElement("textarea"),
+  init() {
+    ele.addEventListener("keydown",this.keycheck)
+  },
+  keycheck(e) {
+    if (e.key == "Control") {
+      this.ele.value.replace(/--date--/,`${new Date()}`)
+    }
+  }
+})
 
 class JSONReader {
   constructor() {
-    let ta = document.createElement("textarea")
     // look for the active file
     performGet().then(res => res.json()).then(rawText => {
       let jsonArray = JSON.parse(rawText)
