@@ -3,12 +3,11 @@ import { performUpload, performGet } from "./drive_code.js"
 import { pdfOb } from "./pdf_loader.js"
 import {imageOb} from "./img_loader.js"
 
-console.log("1/4 --3")
+console.log("1/4 --4")
 let output = []
 let run = () => {
   let expbtn = new ExportBtn()
   let upload = new LoadBtn()
-  let spec_load = new loadAllBtn()
 
 
 }
@@ -16,7 +15,8 @@ let run = () => {
 let TextEle = ()=> ({
   ele: document.createElement("textarea"),
   init() {
-    ele.addEventListener("keydown",this.keycheck)
+    this.ele.addEventListener("keydown",this.keycheck)
+    document.body.append(this.ele)
   },
   keycheck(e) {
     if (e.key == "Control") {
@@ -27,6 +27,8 @@ let TextEle = ()=> ({
 
 class JSONReader {
   constructor() {
+    let ele = TextEle()
+    ele.init()
     // look for the active file
     performGet().then(res => res.json()).then(rawText => {
       let jsonArray = JSON.parse(rawText)
