@@ -400,7 +400,6 @@ class NoteElement {
     }
   }
   timer() {
-    this.timer = setInterval(() => { this.check() }, 10000)
   }
 }
 
