@@ -3,7 +3,7 @@ import { performUpload, performGet } from "./drive_code.js"
 import { pdfOb } from "./pdf_loader.js"
 import {imageOb} from "./img_loader.js"
 
-console.log("1/4 --4")
+console.log("1/4 --5")
 let output = []
 let run = () => {
   let expbtn = new ExportBtn()
@@ -33,10 +33,8 @@ class JSONReader {
     performGet().then(res => res.json()).then(rawText => {
       let jsonArray = JSON.parse(rawText)
       jsonArray.map(j => {
-        ta.value += j.value
+      ele.ele.value += j.value
       })
-    }).then(()=> {
-      document.body.append(ta)
     })
   }
 }
