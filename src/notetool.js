@@ -3,7 +3,7 @@ import { performUpload, performGet } from "./drive_code.js"
 import { pdfOb } from "./pdf_loader.js"
 import {imageOb} from "./img_loader.js"
 
-console.log("1/4 --5")
+console.log("1/4 --6")
 let output = []
 let run = () => {
   let expbtn = new ExportBtn()
@@ -15,7 +15,7 @@ let run = () => {
 let TextEle = ()=> ({
   ele: document.createElement("textarea"),
   init() {
-    this.ele.addEventListener("keydown",this.keycheck)
+    this.ele.addEventListener("keydown",this.keycheck.bind(this))
     document.body.append(this.ele)
   },
   keycheck(e) {
