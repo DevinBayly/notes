@@ -3,6 +3,7 @@ import { performUpload, performGet } from "./drive_code.js"
 import { pdfOb } from "./pdf_loader.js"
 import {imageOb} from "./img_loader.js"
 
+console.log("1/4 --1")
 let output = []
 let run = () => {
   Notification.requestPermission()
@@ -91,9 +92,7 @@ let run = () => {
       }
     }
 
-    document.body.addEventListener("keyup", shiftup)
   }
-  document.body.addEventListener("keydown", shiftdown)
 
   let updatePos = (e) => {
     mousePos[0] = e.pageX
