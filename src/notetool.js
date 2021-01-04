@@ -3,7 +3,7 @@ import { performUpload, performGet } from "./drive_code.js"
 import { pdfOb } from "./pdf_loader.js"
 import {imageOb} from "./img_loader.js"
 
-console.log("1/4 --2")
+console.log("1/4 --3")
 let output = []
 let run = () => {
   let expbtn = new ExportBtn()
