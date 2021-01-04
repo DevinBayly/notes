@@ -20,7 +20,7 @@ let TextEle = ()=> ({
   },
   keycheck(e) {
     if (e.key == "Control") {
-      this.ele.value.replace(/--date--/,`${new Date()}`)
+      this.ele.value = this.ele.value.replace(/--date--/,`${new Date()}`)
     }
   }
 })
