@@ -15,14 +15,17 @@ let TextEle = ()=> ({
   ele: document.createElement("textarea"),
   init() {
     this.ele.addEventListener("keydown",this.keycheck.bind(this))
-    this.ele.style.height="1200px"
+    this.ele.style.height="400px"
     this.ele.style.width="800px"
     document.body.append(this.ele)
   },
   keycheck(e) {
     if (e.key == "Control") {
+      let pos = this.ele.selectionStart
       this.ele.value = this.ele.value.replace(/--date--/,`${new Date()}`)
       e.preventDefault()
+      this.ele.selectionStart = pos
+      this.ele.selectionEnd = pos
     }
   }
 })
