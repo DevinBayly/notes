@@ -24,8 +24,7 @@ let TextEle = ()=> ({
       let pos = this.ele.selectionStart
       this.ele.value = this.ele.value.replace(/--date--/,`${new Date()}`)
       e.preventDefault()
-      this.ele.selectionStart = pos
-      this.ele.selectionEnd = pos
+      setTimeout(()=> {this.ele.selectionStart = pos ;this.ele.selectionEnd = pos},2000)
     }
   }
 })
