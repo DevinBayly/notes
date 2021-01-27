@@ -23,10 +23,12 @@ let TextEle = ()=> ({
     if (e.key == "Control") {
       let pos = this.ele.selectionStart
       let d = `${new Date()}`
+      if (this.ele.value.match(/--date--/)) {
       this.ele.value = this.ele.value.replace(/--date--/,`${d}`)
       e.preventDefault()
       this.ele.selectionstart = pos + d.length
       this.ele.selectionend = pos + d.length
+      }
     }
   }
 })
