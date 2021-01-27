@@ -22,9 +22,11 @@ let TextEle = ()=> ({
   keycheck(e) {
     if (e.key == "Control") {
       let pos = this.ele.selectionStart
-      this.ele.value = this.ele.value.replace(/--date--/,`${new Date()}`)
+      let d = `${new Date()}`
+      this.ele.value = this.ele.value.replace(/--date--/,`${d}`)
       e.preventDefault()
-      setTimeout(()=> {this.ele.selectionStart = pos ;this.ele.selectionEnd = pos},2000)
+      this.ele.selectionstart = pos + d.length
+      this.ele.selectionend = pos + d.length
     }
   }
 })
