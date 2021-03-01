@@ -13,11 +13,14 @@ let run = () => {
 
 let TextEle = ()=> ({
   ele: document.createElement("textarea"),
+  holder:document.createElement("div"),
   init() {
+    this.holder.id = "textholder"
+    this.holder.append(this.ele)
     this.ele.addEventListener("keydown",this.keycheck.bind(this))
     this.ele.style.height="400px"
-    this.ele.style.width="800px"
-    document.body.append(this.ele)
+    this.ele.style.width="90%"
+    document.body.append(this.holder)
   },
   keycheck(e) {
     if (e.key == "Control") {
