@@ -136,8 +136,17 @@ ${JSON.stringify({starting:"text"})}
     }).then(res=> res.json()).then(j=> console.log(j))
 }
 
+function getInput() {
+  // take out the part in the middle that has the file id
+    let input = document.querySelector("#notesid")
+  return input.value.match(/d\/(.*)\/view\?/)[1]
+    
+    
+}
+
 let performGet =()=> {
-    return fetch(`https://www.googleapis.com/drive/v3/files/${idFound}/?key=${API_KEY}&alt=media`,{
+    // get thee id from the input element
+    return fetch(`https://www.googleapis.com/drive/v3/files/${getInput()}/?key=${API_KEY}&alt=media`,{
     })
 }
 let performUpdate =(jdata)=> {
@@ -155,7 +164,7 @@ Content-Type: application/json
 ${JSON.stringify(jdata)}
 --uploadboundary--`
 // make the path include the fileID to update
-    fetch(`https://www.googleapis.com/upload/drive/v3/files/${idFound}/?uploadType=multipart&key=${API_KEY}&fields=id`,{
+    fetch(`https://www.googleapis.com/upload/drive/v3/files/${getInput()}/?uploadType=multipart&key=${API_KEY}&fields=id`,{
         method:"PATCH",
         headers:{
             "Content-type":"multipart/related; boundary=uploadboundary",
@@ -170,7 +179,7 @@ ${JSON.stringify(jdata)}
 }
 // so you create a multtipart upload, with the metadata first, and the body next
 let performUpload = (jdata)=> {
-    if (idFound) {
+    if (getInput() != "") {
         // try to update the contents
         console.log("updating")
         performUpdate(jdata)
